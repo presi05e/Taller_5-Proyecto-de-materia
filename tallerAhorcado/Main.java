@@ -55,11 +55,25 @@ public class Main {
 
     public static void jugar(ArrayList<Palabra> lista) {
 
-        String nombre = ConsoleInput.leerString("Ingresa tu nombre: ");
+        String nombre;
+
+        do {
+
+            nombre = ConsoleInput.leerString("Ingresa tu nombre: ").trim();
+
+            if (nombre.isEmpty()) {
+                System.out.println("⚠️ El nombre no puede estar vacío.");
+            }
+
+        } while (nombre.isEmpty());
 
         boolean modoDios = verificarEasterEgg(nombre);
 
         ArrayList<String> categorias = obtenerCategorias(lista);
+        if (categorias.isEmpty()) {
+            System.out.println("❌ No hay categorías disponibles.");
+            return;
+        }
 
         if (!modoDios) {
             categorias.remove("SECRETOS");
@@ -90,6 +104,10 @@ public class Main {
         String categoriaElegida = categorias.get(opcion - 1);
 
         ArrayList<Palabra> filtradas = filtrarPorCategoria(lista, categoriaElegida);
+        if (filtradas.isEmpty()) {
+            System.out.println("❌ No hay palabras en esta categoría.");
+            return;
+        }
 
         Random rand = new Random();
         Palabra seleccion = filtradas.get(rand.nextInt(filtradas.size()));
@@ -105,14 +123,27 @@ public class Main {
             juego.mostrarAhorcado();
             juego.mostrarPalabra();
 
-            String input = ConsoleInput.leerString("Letra o 'pista': ");
+            String input = ConsoleInput.leerString("Letra o 'pista': ").trim();
+
+            if (input.isEmpty()) {
+                System.out.println("⚠️ Debes ingresar algo.");
+                continue;
+            }
 
             if (input.equalsIgnoreCase("pista")) {
                 juego.usarPista(seleccion.getPista());
                 continue;
             }
 
+            if (input.length() > 1 && !input.equalsIgnoreCase("pista")) {
+                System.out.println("⚠️ Ingresa solo una letra.");
+                continue;
+            }
             char letra = input.charAt(0);
+            if (!Character.isLetter(letra)) {
+                System.out.println("⚠️ Solo puedes ingresar letras.");
+                continue;
+            }
 
             if (juego.validarLetra(letra)) {
                 System.out.println("✅ Correcto");
@@ -132,6 +163,7 @@ public class Main {
     public static void main(String[] args) {
 
         ArrayList<Palabra> lista = CargadorCSV.cargarPalabras();
+        System.out.println("Cantidad de palabras cargadas: " + lista.size());
 
         int opcion;
 

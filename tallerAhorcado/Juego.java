@@ -124,7 +124,9 @@ public class Juego {
                         """
         };
 
-        System.out.println(dibujos[errores]);
+        if (errores >= 0 && errores < dibujos.length) {
+            System.out.println(dibujos[errores]);
+        }
     }
 
     public void usarPista(String pista) {
